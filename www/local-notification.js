@@ -576,7 +576,7 @@ exports._mergeWithDefaults = function (options) {
 
     options.meta = {
         plugin:  'cordova-plugin-ebw-local-notification',
-        version: '0.9.3'
+        version: '0.9.4'
     };
 
     return options;
