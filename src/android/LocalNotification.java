@@ -277,29 +277,9 @@ public class LocalNotification extends CordovaPlugin {
                 cordova.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        AlertDialog alertDialog = new AlertDialog.Builder(cordova.getActivity(), AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).create();
-
-                        alertDialog.setTitle("Warning");
-
-                        alertDialog.setMessage("Please allow " + getApplicationName() + " to always run in the background ");
-
-                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES", new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int id) {
-                                Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                                intent.setData(Uri.parse("package:" + cordova.getActivity().getPackageName()));
-                                cordova.getActivity().startActivity(intent);
-
-                            }
-                        });
-
-                        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int id) {
-
-                            }
-                        });
-                        alertDialog.show();
+                        Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                        intent.setData(Uri.parse("package:" + cordova.getActivity().getPackageName()));
+                        cordova.getActivity().startActivity(intent);
                     }
                 });
 
