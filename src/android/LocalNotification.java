@@ -25,8 +25,16 @@ package de.appplant.cordova.plugin.localnotification;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.net.Uri;
+import android.os.Build;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.util.Pair;
 import android.view.View;
 
@@ -262,6 +270,47 @@ public class LocalNotification extends CordovaPlugin {
      *                JavaScript.
      */
     private void schedule (JSONArray toasts, CallbackContext command) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PowerManager pm = (PowerManager) cordova.getActivity().getSystemService(Context.POWER_SERVICE);
+            if (pm != null && !pm.isIgnoringBatteryOptimizations(cordova.getActivity().getPackageName())) {
+
+                cordova.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog alertDialog = new AlertDialog.Builder(cordova.getActivity(), AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).create();
+
+                        alertDialog.setTitle("Warning");
+
+                        alertDialog.setMessage("Please allow " + getApplicationName() + " to always run in the background ");
+
+                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES", new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                                intent.setData(Uri.parse("package:" + cordova.getActivity().getPackageName()));
+                                cordova.getActivity().startActivity(intent);
+
+                            }
+                        });
+
+                        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+                        alertDialog.show();
+                    }
+                });
+
+            }
+        }
+        procceedSchedule(toasts,command);
+
+    }
+
+
+    private void procceedSchedule(JSONArray toasts,CallbackContext command){
         Manager mgr = getNotMgr();
 
         for (int i = 0; i < toasts.length(); i++) {
@@ -276,6 +325,13 @@ public class LocalNotification extends CordovaPlugin {
         }
 
         check(command);
+
+    }
+
+    public  String getApplicationName() {
+        ApplicationInfo applicationInfo = cordova.getContext().getApplicationInfo();
+        int stringId = applicationInfo.labelRes;
+        return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : cordova.getContext().getString(stringId);
     }
 
     /**
