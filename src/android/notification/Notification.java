@@ -221,21 +221,27 @@ public final class Notification {
                     context, 0, intent, FLAG_CANCEL_CURRENT);
 
             try {
-                switch (options.getPrio()) {
-                    case PRIORITY_MIN:
-                        mgr.setExact(RTC, time, pi);
-                        break;
-                    case PRIORITY_MAX:
+                // switch (options.getPrio()) {
+                //     case PRIORITY_MIN:
+                //         mgr.setExact(RTC, time, pi);
+                //         break;
+                //     case PRIORITY_MAX:
+                //         if (SDK_INT >= M) {
+                //             mgr.setExactAndAllowWhileIdle(RTC_WAKEUP, time, pi);
+                //         } else {
+                //             mgr.setExact(RTC, time, pi);
+                //         }
+                //         break;
+                //     default:
+                //         mgr.setExact(RTC_WAKEUP, time, pi);
+                //         break;
+                // }
+                    //NOTE remove the library
                         if (SDK_INT >= M) {
-                            mgr.setExactAndAllowWhileIdle(RTC_WAKEUP, time, pi);
+                                mgr.setExactAndAllowWhileIdle(RTC_WAKEUP, time, pi);
                         } else {
-                            mgr.setExact(RTC, time, pi);
+                                mgr.setExact(RTC, time, pi);
                         }
-                        break;
-                    default:
-                        mgr.setExact(RTC_WAKEUP, time, pi);
-                        break;
-                }
             } catch (Exception ignore) {
                 // Samsung devices have a known bug where a 500 alarms limit
                 // can crash the app
